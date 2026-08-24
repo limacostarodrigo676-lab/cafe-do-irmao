@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+  <html lang="pt-BR">
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Café do Irmão — Torrado e Moído Desde 2008</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+  *{margin:0;padding:0;box-sizing:border-box}
+:root{
+    --P:#080401;--M:#3D1C00;--V:#1E3C14;
+  --D:#C8780A;--A:#F5A820;--C:#F0DBA5;--K:#F5EFE6
+    }
+html{scroll-behavior:smooth}
+  body{font-family:'Crimson Pro',Georgia,serif;background:var(--P);color:var(--C);overflow-x:hidden}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--P);border-bottom:1px solid var(--M);padding:0 6%;display:flex;align-items:center;justify-content:space-between;height:68px}
+.nav-logo img{height:44px;width:auto;display:block}
+  nav ul{list-style:none;display:flex;gap:36px}
+nav ul a{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:3px;color:var(--C);text-decoration:none;transition:color .2s}
+nav ul a:hover{color:var(--A)}
+
+/* HERO */
+#hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;padding-top:68px}
+  .hero-left{background:var(--P);display:flex;flex-direction:column;justify-content:center;padding:80px 6% 80px 6%}
+  .eyebrow{font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:6px;color:var(--D);margin-bottom:24px}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(68px,8.5vw,108px);line-height:.88;color:var(--C);margin-bottom:28px}
+.hero-title em{color:var(--A);font-style:normal;display:block}
+  .hero-desc{font-size:19px;line-height:1.7;color:var(--D);max-width:380px;margin-bottom:44px;font-weight:300}
+.ctas{display:flex;gap:14px;flex-wrap:wrap}
+.btn-gold{background:var(--A);color:var(--P);font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:3px;padding:15px 36px;border:none;cursor:pointer;text-decoration:none;display:inline-block;transition:background .2s}
+.btn-gold:hover{background:var(--D)}
+.btn-out{background:none;color:var(--C);font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:3px;padding:14px 36px;border:1px solid var(--D);text-decoration:none;display:inline-block;transition:all .2s}
+.btn-out:hover{background:var(--D);color:var(--P)}
+.hero-right{position:relative;overflow:hidden;background:var(--M)}
+.hero-right img{width:100%;height:100%;object-fit:cover;display:block}
+.hero-overlay{position:absolute;inset:0;left:0;width:100px;background:linear-gradient(to right,var(--P),transparent)}
+
+/* SEÇÃO BASE */
+section{padding:88px 6%}
+  .sec-label{font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:6px;color:var(--D);margin-bottom:10px}
+.sec-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(42px,5vw,64px);line-height:.92;margin-bottom:56px}
+
+/* DIFERENCIAIS */
+#dif{background:var(--P)}
+#dif .sec-title{color:var(--C)}
+.dif-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
+.dif-card{background:var(--M);padding:52px 40px}
+.dif-n{font-family:'Bebas Neue',sans-serif;font-size:72px;color:#1a0900;line-height:1}
+.dif-bar{width:28px;height:2px;background:var(--D);margin:14px 0 18px}
+.dif-t{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--A);margin-bottom:14px}
+.dif-p{font-size:16px;line-height:1.75;color:var(--C);font-weight:300}
+
+/* PRODUTOS */
+#prod{background:var(--K)}
+  #prod .sec-label{color:var(--D)}
+  #prod .sec-title{color:var(--M)}
+  .prod-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.prod-card{background:#fff;display:flex;flex-direction:column}
+  .prod-img{aspect-ratio:3/2;overflow:hidden;position:relative;background:var(--M)}
+.prod-img img{width:100%;height:100%;object-fit:cover;display:block}
+  .prod-tag{position:absolute;top:16px;left:16px;background:var(--A);color:var(--P);font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;padding:6px 14px}
+.prod-body{padding:36px;flex:1;display:flex;flex-direction:column}
+.prod-g{font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:5px;color:var(--D);margin-bottom:8px}
+.prod-name{font-family:'Bebas Neue',sans-serif;font-size:34px;line-height:.95;color:var(--M);margin-bottom:16px}
+.prod-desc{font-size:16px;line-height:1.7;color:var(--M);font-weight:300;margin-bottom:28px;flex:1}
+.prod-tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}
+.ptag{background:var(--K);color:var(--M);font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:2px;padding:6px 14px;border:1px solid var(--D)}
+.btn-prod{background:var(--M);color:var(--A);font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:3px;padding:15px;border:none;cursor:pointer;text-decoration:none;display:block;text-align:center;transition:background .2s}
+.btn-prod:hover{background:var(--P)}
+
+/* PROCESSO */
+#proc{background:var(--P)}
+#proc .sec-title{color:var(--C)}
+.proc-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start}
+.proc-img{aspect-ratio:2/3;overflow:hidden;background:var(--M);position:relative}
+  .proc-img img{width:100%;height:100%;object-fit:cover;display:block}
+  .steps{margin-top:48px}
+.step{display:flex;gap:24px;padding:26px 0;border-bottom:1px solid var(--M)}
+.step:first-child{border-top:1px solid var(--M)}
+.sn{font-family:'Bebas Neue',sans-serif;font-size:44px;color:var(--M);line-height:1;min-width:44px}
+.sc h4{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--A);margin-bottom:4px}
+.sc p{font-size:15px;color:var(--C);font-weight:300;line-height:1.65}
+
+/* HISTÓRIA */
+#hist{background:var(--V);padding:0}
+  .hist-grid{display:grid;grid-template-columns:1fr 1fr;min-height:600px}
+.hist-img{overflow:hidden;background:#0f2208;position:relative}
+  .hist-img img{width:100%;height:100%;object-fit:cover;display:block}
+  .hist-content{padding:80px 8% 80px 7%;display:flex;flex-direction:column;justify-content:center}
+#hist .sec-label{color:var(--A)}
+  .hist-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(56px,6vw,80px);line-height:.88;color:var(--C);margin-bottom:24px}
+.hist-title em{color:var(--A);font-style:normal}
+.hist-sep{width:40px;height:2px;background:var(--D);margin-bottom:28px}
+.hist-p{font-size:18px;line-height:1.8;color:var(--C);font-weight:300;margin-bottom:16px}
+.hist-local{font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:5px;color:var(--D);margin-top:24px}
+
+/* CONTATO */
+#cont{background:var(--P)}
+  .cont-inner{text-align:center;max-width:680px;margin:0 auto}
+.cont-inner .sec-label{color:var(--D)}
+  .cont-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,7vw,84px);color:var(--C);line-height:.9;margin-bottom:12px}
+.cont-title em{color:var(--A);font-style:normal}
+.cont-sub{font-size:18px;color:var(--D);margin-bottom:52px;font-weight:300}
+.cont-ctas{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:64px}
+.btn-wa{background:var(--A);color:var(--P);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;padding:18px 52px;text-decoration:none;display:inline-block;transition:background .2s}
+.btn-wa:hover{background:var(--D)}
+.btn-ig{background:none;color:var(--C);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;padding:17px 52px;border:1px solid var(--D);text-decoration:none;display:inline-block;transition:all .2s}
+.btn-ig:hover{background:var(--D);color:var(--P)}
+.cont-info{display:flex;gap:56px;justify-content:center;flex-wrap:wrap}
+.ci .ci-l{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:5px;color:var(--D);margin-bottom:6px}
+.ci .ci-v{font-size:18px;color:var(--C)}
+
+/* LOGO no contato */
+.cont-logo{margin:0 auto 40px;display:block;height:80px;width:auto}
+
+/* FOOTER */
+footer{background:var(--M);padding:28px 6%;display:flex;align-items:center;justify-content:space-between}
+.footer-logo img{height:36px;width:auto}
+footer p{font-size:13px;color:var(--D)}
+
+/* PLACEHOLDER fallback */
+.ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;pointer-events:none}
+.ph span{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:3px;color:var(--D);opacity:.6}
+img{position:relative;z-index:1}
+</style>
+  </head>
+  <body>
+
+  <!-- ══ NAV ══ -->
+  <nav>
+    <div class="nav-logo">
+      <img src="https://drive.google.com/thumbnail?id=1yewU8x2bdl6TJCuGT0BMSIv9SEX_7eqb&sz=w400"
+           alt="Café do Irmão" style="height:48px;width:auto;display:block">
+    </div>
+    <ul>
+      <li><a href="#dif">Sobre</a></li>
+      <li><a href="#prod">Produtos</a></li>
+      <li><a href="#hist">História</a></li>
+      <li><a href="#cont">Contato</a></li>
+    </ul>
+  </nav>
+
+  <!-- ══ HERO ══ -->
+  <section id="hero">
+    <div class="hero-left">
+      <p class="eyebrow">MANDAGUAÇU · PR · DESDE 2008</p>
+      <h1 class="hero-title">
+        CAFÉ
+        <em>FORTE</em>
+        DE VERDADE.
+      </h1>
+      <p class="hero-desc">Torrado e moído com cuidado. 16 anos servindo quem sabe o que quer numa xícara.</p>
+    <div class="ctas">
+      <a href="https://wa.me/5544999547356" class="btn-gold">PEDIR NO WHATSAPP</a>
+        <a href="#prod" class="btn-out">VER PRODUTOS</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <!-- foto 1: cozinha rústica com embalagem -->
+      <img src="https://drive.google.com/thumbnail?id=1tzlJPO5D2mXoOMHBh20pWkihK44AVyep&sz=w1200"
+           alt="Café do Irmão na cozinha">
+      <div class="hero-overlay"></div>
+    </div>
+  </section>
+
+  <!-- ══ DIFERENCIAIS ══ -->
+  <section id="dif">
+    <p class="sec-label">POR QUE O CAFÉ DO IRMÃO</p>
+    <h2 class="sec-title">O QUE NOS<br>TORNA ÚNICOS.</h2>
+    <div class="dif-grid">
+      <div class="dif-card">
+        <div class="dif-n">01</div><div class="dif-bar"></div>
+        <div class="dif-t">SEPARAÇÃO MANUAL</div>
+        <p class="dif-p">Cada grão é selecionado à mão antes da moagem. Impurezas fora — qualidade dentro. Isso não se improvisa.</p>
+    </div>
+    <div class="dif-card">
+        <div class="dif-n">02</div><div class="dif-bar"></div>
+        <div class="dif-t">16 ANOS DE TRADIÇÃO</div>
+        <p class="dif-p">Desde 2008 em Mandaguaçu. Confiança construída xícara por xícara, mercado por mercado, família por família.</p>
+    </div>
+    <div class="dif-card">
+        <div class="dif-n">03</div><div class="dif-bar"></div>
+        <div class="dif-t">FORTE E ENCORPADO</div>
+        <p class="dif-p">Não é café light. É intenso, limpo e honesto na xícara — do jeito que tem que ser todo dia.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ PRODUTOS ══ -->
+  <section id="prod">
+    <p class="sec-label">NOSSOS PRODUTOS</p>
+    <h2 class="sec-title">ESCOLHA O SEU.</h2>
+    <div class="prod-grid">
+
+      <!-- 250g -->
+      <div class="prod-card">
+        <div class="prod-img" style="position:relative">
+          <!-- foto 2: close-up embalagem com pó de café -->
+          <img src="https://drive.google.com/thumbnail?id=1MZflwM38MB2NAcztMkE2satRijo228Jf&sz=w1200"
+               alt="Café do Irmão 250g">
+          <div class="ph"><span>EMBALAGEM 250G</span></div>
+          <span class="prod-tag">250G</span>
+        </div>
+        <div class="prod-body">
+          <p class="prod-g">250 GRAMAS</p>
+          <h3 class="prod-name">O CLÁSSICO<br>DO DIA A DIA.</h3>
+          <p class="prod-desc">Tamanho certo pra quem não abre mão de café forte todo dia. Rende bem, mantém o sabor e cabe no bolso.</p>
+          <div class="prod-tags">
+            <span class="ptag">TORRADO ESCURO</span>
+            <span class="ptag">MOÍDO</span>
+            <span class="ptag">SELEÇÃO MANUAL</span>
+          </div>
+          <a href="https://wa.me/5544999547356?text=Oi!%20Quero%20pedir%20o%20Caf%C3%A9%20do%20Irm%C3%A3o%20250g" class="btn-prod">PEDIR PELO WHATSAPP</a>
+        </div>
+      </div>
+
+      <!-- 500g -->
+      <div class="prod-card">
+        <div class="prod-img" style="position:relative">
+          <!-- foto 3: balança Triunfo + xícara + embalagem -->
+          <img src="https://drive.google.com/thumbnail?id=18XHureK34IQEdoVfJQJ04i8m9q5mDGfB&sz=w1200"
+               alt="Café do Irmão 500g">
+          <div class="ph"><span>EMBALAGEM 500G</span></div>
+          <span class="prod-tag">500G</span>
+        </div>
+        <div class="prod-body">
+          <p class="prod-g">500 GRAMAS</p>
+          <h3 class="prod-name">PARA FAMÍLIA<br>E EMPRESA.</h3>
+          <p class="prod-desc">Para casa que consome muito ou empresa que não abre mão da qualidade. O mesmo café forte — em maior quantidade.</p>
+          <div class="prod-tags">
+            <span class="ptag">TORRADO ESCURO</span>
+            <span class="ptag">MOÍDO</span>
+            <span class="ptag">MELHOR CUSTO</span>
+          </div>
+          <a href="https://wa.me/5544999547356?text=Oi!%20Quero%20pedir%20o%20Caf%C3%A9%20do%20Irm%C3%A3o%20500g" class="btn-prod">PEDIR PELO WHATSAPP</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══ PROCESSO ══ -->
+  <section id="proc">
+    <div class="proc-grid">
+      <div class="proc-img" style="position:relative">
+        <!-- foto 4: prateleira de mercado com embalagens -->
+        <img src="https://drive.google.com/thumbnail?id=1xsB-jQMpfrIjsPFyGfhXnLLdlwf8xexe&sz=w1200"
+             alt="Café do Irmão nos pontos de venda">
+        <div class="ph"><span>FOTO PROCESSO</span></div>
+      </div>
+      <div>
+        <p class="sec-label">NOSSO PROCESSO</p>
+        <h2 class="sec-title" style="color:var(--C)">FEITO COM<br>CUIDADO.</h2>
+        <div class="steps">
+          <div class="step">
+            <span class="sn">01</span>
+            <div class="sc"><h4>SELEÇÃO DOS GRÃOS</h4><p>Escolha cuidadosa do café cru antes de qualquer processo.</p></div>
+          </div>
+          <div class="step">
+            <span class="sn">02</span>
+            <div class="sc"><h4>SEPARAÇÃO MANUAL</h4><p>Impurezas retiradas à mão. O passo que faz toda a diferença no sabor.</p></div>
+          </div>
+          <div class="step">
+            <span class="sn">03</span>
+            <div class="sc"><h4>TORRA CONTROLADA</h4><p>Torra escura e consistente — corpo e intensidade que a marca tem.</p></div>
+        </div>
+          <div class="step">
+            <span class="sn">04</span>
+            <div class="sc"><h4>MOAGEM E EMBALAGEM</h4><p>Moído e embalado em Mandaguaçu. Da origem direto para a sua xícara.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ HISTÓRIA ══ -->
+  <section id="hist">
+    <div class="hist-grid">
+      <div class="hist-img">
+        <!-- foto 2 reaproveita close-up de pó — contexto de origem/processo -->
+        <img src="https://drive.google.com/thumbnail?id=1MZflwM38MB2NAcztMkE2satRijo228Jf&sz=w1200"
+             alt="Grãos Café do Irmão" style="object-position:center">
+      </div>
+      <div class="hist-content">
+        <p class="sec-label">NOSSA HISTÓRIA</p>
+        <h2 class="hist-title">DESDE<br><em>2008.</em></h2>
+        <div class="hist-sep"></div>
+        <p class="hist-p">O Café do Irmão nasceu em Mandaguaçu com uma ideia simples: fazer um café forte, honesto e consistente para o dia a dia.</p>
+        <p class="hist-p">Sem frescura. Sem rodeio. Só café de verdade — torrado e moído com o mesmo cuidado de sempre.</p>
+        <p class="hist-local">MANDAGUAÇU · PARANÁ · BRASIL</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ CONTATO ══ -->
+  <section id="cont">
+    <div class="cont-inner">
+      <p class="sec-label">VEM PROVAR</p>
+      <!-- Logo fundo preto — blend com seção contato (#080401) -->
+      <img src="https://drive.google.com/thumbnail?id=1yewU8x2bdl6TJCuGT0BMSIv9SEX_7eqb&sz=w600"
+           alt="Café do Irmão" style="height:120px;width:auto;display:block;margin:0 auto 36px">
+      <h2 class="cont-title">O CAFÉ QUE<br>MANDAGUAÇU<br><em>AMA.</em></h2>
+      <p class="cont-sub">Peça pelo WhatsApp ou nos acompanhe no Instagram.</p>
+     <div class="cont-ctas">
+        <a href="https://wa.me/5544999547356" class="btn-wa">WHATSAPP</a>
+        <a href="https://instagram.com/oficialcafedoirmao" class="btn-ig">@OFICIALCAFEDOIRMAO</a>
+      </div>
+      <div class="cont-info">
+        <div class="ci"><p class="ci-l">TELEFONE</p><p class="ci-v">(44) 99954-7356</p></div>
+        <div class="ci"><p class="ci-l">LOCALIZAÇÃO</p><p class="ci-v">Mandaguaçu, PR</p></div>
+        <div class="ci"><p class="ci-l">DESDE</p><p class="ci-v">2008</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FOOTER ══ -->
+  <footer>
+    <div class="footer-logo">
+      <!-- Logo fundo marrom — blend com footer (#3D1C00) -->
+      <img src="https://drive.google.com/thumbnail?id=1dWNtaWZzjWXSKZi-X2SWztO0jRo3mj4i&sz=w300"
+           alt="Café do Irmão" style="height:36px;width:auto;display:block">
+    </div>
+    <p>© 2026 Café do Irmão · Mandaguaçu, PR · Torrado e moído desde 2008</p>
+  </footer>
+
+  </body>
+  </html>
+  
