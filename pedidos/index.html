@@ -1,0 +1,777 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<title>Café do Irmão</title>
+
+<style>
+  :root {
+    --ink: #080401;
+    --brown: #3d1c00;
+    --brown-deep: #2b1400;
+    --amber-bar: #c8780a;
+    --gold: #f5a820;
+    --cream: #f0dba5;
+    --parchment: #f5efe6;
+    --white: #ffffff;
+    --green: #1e3c14;
+    --green-deep: #0f2208;
+    --ink-on-parchment: #2b1400;
+    --muted-on-parchment: #6b5a45;
+    --muted-on-dark: #b9a480;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    background: var(--ink);
+    color: var(--cream);
+  }
+
+  body {
+    font-family: "Crimson Pro", Georgia, serif;
+    -webkit-font-smoothing: antialiased;
+    padding-bottom: 84px;
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, .display {
+    font-family: "Bebas Neue", ui-sans-serif, sans-serif;
+    line-height: 0.95;
+    margin: 0;
+    text-wrap: balance;
+  }
+  h1 { letter-spacing: -0.01em; }
+  h2 { letter-spacing: -0.005em; }
+  h3 { letter-spacing: 0; }
+
+  button, input, textarea { font-family: inherit; }
+  button, .choice, .nav-btn {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  #root { min-height: 100vh; }
+
+  .app {
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+    background: var(--ink);
+    position: relative;
+    box-shadow: 0 0 60px rgba(0, 0, 0, 0.5);
+  }
+
+  @media (min-width: 481px) {
+    body { background: var(--brown-deep); }
+    .app { border-inline: 1px solid rgba(240, 219, 165, 0.12); }
+  }
+
+  /* ---------- top bar (translucent material) ---------- */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.9rem 1.1rem;
+    background: rgba(8, 4, 1, 0.72);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid rgba(240, 219, 165, 0.14);
+  }
+  .topbar-left { display: flex; align-items: center; gap: 0.7rem; }
+  .back-link {
+    font-family: "Bebas Neue", sans-serif; font-size: 0.68rem; letter-spacing: 0.08em;
+    color: var(--muted-on-dark); text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem;
+    transition: color 120ms ease;
+  }
+  .back-link:hover { color: var(--gold); }
+  .logo { display: flex; flex-direction: column; line-height: 0.85; }
+  .logo .cafe { font-family: "Bebas Neue", sans-serif; font-size: 0.72rem; letter-spacing: 0.28em; color: var(--cream); }
+  .logo .irmao { font-family: "Bebas Neue", sans-serif; font-size: 1.5rem; letter-spacing: 0.04em; color: var(--gold); }
+  .unit-pill {
+    display: flex; align-items: center; gap: 0.4rem;
+    background: var(--brown); border: 1px solid rgba(200, 120, 10, 0.5); color: var(--cream);
+    font-family: "Bebas Neue", sans-serif; font-size: 0.72rem; letter-spacing: 0.08em;
+    padding: 0.42rem 0.7rem; border-radius: 999px;
+  }
+  .unit-pill svg { width: 12px; height: 12px; flex: none; }
+
+  /* ---------- view fade ---------- */
+  .view { animation: viewIn 260ms cubic-bezier(0.22,1,0.36,1); }
+  @keyframes viewIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .view { animation: none; }
+  }
+
+  .eyebrow {
+    font-family: "Bebas Neue", sans-serif; font-size: 0.76rem; letter-spacing: 0.22em;
+    color: var(--gold); display: block; margin-bottom: 0.6rem;
+  }
+  .eyebrow.on-parchment { color: var(--amber-bar); }
+
+  /* ---------- hero / three.js stage ---------- */
+  .hero-strip { background: var(--ink); }
+  .three-hero {
+    height: 260px;
+    width: 100%;
+    background: radial-gradient(120% 140% at 30% 10%, #3d2410 0%, #1a0e05 55%, #080401 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .three-hero canvas { display: block; width: 100% !important; height: 100% !important; }
+  .three-hero .hero-hint {
+    position: absolute; bottom: 10px; right: 14px;
+    font-family: "Bebas Neue", sans-serif; font-size: 0.62rem; letter-spacing: 0.12em;
+    color: rgba(240,219,165,0.4);
+  }
+  .hero-copy { padding: 1.6rem 1.1rem 1.7rem; }
+  .hero-copy h1 { font-size: 2.4rem; color: var(--cream); }
+  .hero-copy h1 span { color: var(--gold); }
+  .hero-copy p { color: var(--muted-on-dark); font-size: 1.02rem; margin: 0.8rem 0 0; max-width: 34ch; }
+
+  /* ---------- product list ---------- */
+  .catalog-section { background: var(--parchment); color: var(--ink-on-parchment); padding: 1.8rem 1.1rem 2.4rem; }
+  .catalog-section h2 { font-size: 1.9rem; color: var(--ink-on-parchment); margin-bottom: 1.3rem; }
+
+  .product-card {
+    background: var(--white); border-radius: 14px; overflow: hidden; margin-bottom: 1.1rem;
+    box-shadow: 0 1px 2px rgba(43, 20, 0, 0.06), 0 10px 24px rgba(43, 20, 0, 0.08);
+  }
+  .bag-art {
+    position: relative; height: 150px; display: flex; align-items: center; justify-content: center; overflow: hidden;
+  }
+  .bag-art.tone-a { background: radial-gradient(120% 140% at 20% 0%, #4a2c14 0%, #2b1400 65%, #1a0b00 100%); }
+  .bag-art.tone-b { background: radial-gradient(120% 140% at 20% 0%, #2f4c22 0%, #1e3c14 60%, #0f2208 100%); }
+  .bag { width: 92px; height: 116px; border-radius: 6px 6px 16px 16px; background: linear-gradient(160deg, #5a3a1e, #3d2410 60%, #2b1400); position: relative; box-shadow: 0 10px 18px rgba(0,0,0,0.45); }
+  .bag::before { content: ""; position: absolute; top: -10px; left: 10px; right: 10px; height: 20px; background: #6b4626; border-radius: 4px 4px 0 0; transform: perspective(60px) rotateX(20deg); }
+  .bag .seal { position: absolute; top: 34px; left: 50%; transform: translateX(-50%); width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: "Bebas Neue", sans-serif; font-size: 0.56rem; letter-spacing: 0.05em; text-align: center; color: var(--ink); }
+  .tone-a .bag .seal { background: var(--gold); }
+  .tone-b .bag .seal { background: #c9d9a0; }
+  .bag .size-tag { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); font-family: "Bebas Neue", sans-serif; font-size: 0.62rem; letter-spacing: 0.08em; color: var(--cream); }
+
+  .product-body { padding: 1.1rem 1.1rem 1.2rem; }
+  .product-size { font-family: "Bebas Neue", sans-serif; font-size: 0.72rem; letter-spacing: 0.14em; color: var(--muted-on-parchment); }
+  .product-title { font-size: 1.5rem; margin: 0.15rem 0 0.5rem; color: var(--brown-deep); }
+  .product-desc { font-size: 0.96rem; color: var(--muted-on-parchment); margin: 0 0 0.7rem; }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; }
+  .tag { font-family: "Bebas Neue", sans-serif; font-size: 0.66rem; letter-spacing: 0.06em; color: var(--brown-deep); border: 1px solid rgba(43,20,0,0.25); padding: 0.25rem 0.55rem; border-radius: 999px; }
+  .product-footer { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; }
+  .price { font-family: "Bebas Neue", sans-serif; font-size: 1.5rem; color: var(--amber-bar); }
+  .price small { font-size: 0.85rem; opacity: 0.75; }
+
+  .stepper { display: flex; align-items: center; gap: 0.5rem; border: 1px solid rgba(43,20,0,0.2); border-radius: 999px; padding: 0.2rem 0.3rem; }
+  .stepper.dark { border-color: rgba(240,219,165,0.2); }
+  .stepper button { width: 26px; height: 26px; border-radius: 50%; border: none; background: var(--parchment); color: var(--brown-deep); font-size: 1rem; line-height: 1; cursor: pointer; transition: transform 120ms cubic-bezier(0.22,1,0.36,1); }
+  .stepper.dark button { background: var(--brown); color: var(--cream); }
+  .stepper button:active { transform: scale(0.9); transition: transform 0ms; }
+  .stepper span { font-family: "Bebas Neue", sans-serif; min-width: 1.1rem; text-align: center; }
+
+  .btn { font-family: "Bebas Neue", sans-serif; letter-spacing: 0.06em; font-size: 0.92rem; border: none; border-radius: 999px; padding: 0.85rem 1.3rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; text-decoration: none; transition: transform 120ms cubic-bezier(0.22,1,0.36,1); }
+  .btn:active { transform: scale(0.97); transition: transform 0ms; }
+  .btn-gold { background: var(--gold); color: var(--ink); width: 100%; margin-top: 0.9rem; }
+  .btn-outline { background: transparent; color: var(--cream); border: 1px solid var(--amber-bar); }
+  .btn-block { width: 100%; }
+  @media (prefers-reduced-motion: reduce) { .btn:active, .stepper button:active { transform: none; } }
+
+  /* ---------- cart view ---------- */
+  .cart-wrap { padding: 1.6rem 1.1rem 1rem; }
+  .cart-wrap h2 { font-size: 2.1rem; color: var(--cream); margin-bottom: 1.4rem; }
+  .cart-item { display: grid; grid-template-columns: 48px 1fr auto; gap: 0.8rem; align-items: center; padding: 0.9rem 0; border-bottom: 1px solid rgba(240,219,165,0.12); }
+  .cart-swatch { width: 48px; height: 48px; border-radius: 8px; background: linear-gradient(160deg, #5a3a1e, #2b1400); }
+  .cart-swatch.b { background: linear-gradient(160deg, #3d5c2c, #0f2208); }
+  .cart-item .name { font-size: 1.02rem; color: var(--cream); }
+  .cart-item .meta { font-size: 0.82rem; color: var(--muted-on-dark); margin-top: 0.15rem; }
+  .cart-item .line-price { font-family: "Bebas Neue", sans-serif; color: var(--gold); font-size: 1.05rem; text-align: right; }
+  .cart-item .row-controls { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.4rem; }
+  .remove-link { font-size: 0.78rem; color: var(--muted-on-dark); background: none; border: none; text-decoration: underline; cursor: pointer; padding: 0; }
+  .empty-state { text-align: center; padding: 3rem 1rem; color: var(--muted-on-dark); }
+  .empty-state p { margin: 0 0 1.2rem; }
+  .subtotal-row { display: flex; justify-content: space-between; align-items: baseline; padding: 1.2rem 0 0.2rem; margin-top: 0.4rem; }
+  .subtotal-row .label { font-family: "Bebas Neue", sans-serif; letter-spacing: 0.08em; color: var(--muted-on-dark); font-size: 0.85rem; }
+  .subtotal-row .amount { font-family: "Bebas Neue", sans-serif; font-size: 1.9rem; color: var(--gold); }
+
+  /* ---------- checkout ---------- */
+  .checkout-wrap { padding: 1.6rem 1.1rem 1rem; }
+  .checkout-wrap h2 { font-size: 2.1rem; color: var(--cream); margin-bottom: 1.6rem; }
+  .step { padding: 1.2rem 0; border-top: 1px solid rgba(240,219,165,0.12); }
+  .step:first-of-type { border-top: none; }
+  .step-head { display: flex; align-items: baseline; gap: 0.7rem; margin-bottom: 0.9rem; }
+  .step-num { font-family: "Bebas Neue", sans-serif; font-size: 1.5rem; color: var(--amber-bar); }
+  .step-title { font-family: "Bebas Neue", sans-serif; font-size: 1.05rem; letter-spacing: 0.05em; color: var(--cream); }
+  label.field { display: block; margin-bottom: 0.9rem; }
+  label.field span { display: block; font-size: 0.8rem; letter-spacing: 0.03em; color: var(--muted-on-dark); margin-bottom: 0.35rem; }
+  label.field input, label.field textarea { width: 100%; background: var(--brown-deep); border: 1px solid rgba(240,219,165,0.18); color: var(--cream); border-radius: 8px; padding: 0.7rem 0.8rem; font-size: 1rem; font-family: "Crimson Pro", Georgia, serif; }
+  label.field textarea { resize: vertical; min-height: 4.5rem; }
+  label.field input::placeholder, label.field textarea::placeholder { color: rgba(240,219,165,0.35); }
+  .choice-row { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+  .choice { flex: 1 1 auto; text-align: center; padding: 0.75rem 0.6rem; border-radius: 10px; border: 1px solid rgba(240,219,165,0.22); color: var(--cream); font-family: "Bebas Neue", sans-serif; font-size: 0.85rem; letter-spacing: 0.04em; cursor: pointer; background: transparent; transition: transform 120ms cubic-bezier(0.22,1,0.36,1); }
+  .choice:active { transform: scale(0.96); transition: transform 0ms; }
+  .choice.selected { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+  .addr-field { margin-top: 0.9rem; }
+  .payment-note { font-size: 0.86rem; color: var(--muted-on-dark); margin-top: 0.7rem; line-height: 1.45; }
+  .field-error { font-size: 0.8rem; color: #e2895a; margin-top: -0.5rem; margin-bottom: 0.8rem; }
+
+  /* ---------- confirmation ---------- */
+  .confirm-hero { background: var(--green); padding: 2.6rem 1.4rem 2rem; text-align: center; }
+  .confirm-hero .check { width: 56px; height: 56px; border-radius: 50%; background: var(--cream); color: var(--green-deep); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.2rem; font-size: 1.6rem; }
+  .confirm-hero h2 { font-size: 2.1rem; color: var(--cream); }
+  .confirm-hero p { color: #cfe0c2; margin: 0.7rem auto 0; max-width: 30ch; font-size: 0.98rem; }
+  .confirm-summary { padding: 1.5rem 1.1rem; }
+  .summary-card { background: var(--brown); border: 1px solid rgba(200,120,10,0.35); border-radius: 12px; padding: 1.1rem 1.2rem; margin-bottom: 1.3rem; }
+  .summary-line { display: flex; justify-content: space-between; gap: 0.8rem; padding: 0.4rem 0; font-size: 0.94rem; }
+  .summary-line.total { border-top: 1px solid rgba(240,219,165,0.18); margin-top: 0.4rem; padding-top: 0.7rem; }
+  .summary-line.total .v { font-family: "Bebas Neue", sans-serif; color: var(--gold); font-size: 1.2rem; }
+  .summary-line .k { color: var(--muted-on-dark); }
+  .summary-line .v { color: var(--cream); text-align: right; }
+  .proto-note { font-size: 0.82rem; color: var(--muted-on-dark); line-height: 1.5; padding: 0 0.2rem 1.5rem; }
+
+  /* ---------- bottom nav (translucent material) ---------- */
+  .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 30; display: flex; max-width: 480px; margin: 0 auto; background: rgba(8,4,1,0.72); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); border-top: 1px solid rgba(240,219,165,0.16); }
+  .nav-btn { flex: 1; background: none; border: none; color: var(--muted-on-dark); padding: 0.75rem 0 0.65rem; display: flex; flex-direction: column; align-items: center; gap: 0.25rem; font-family: "Bebas Neue", sans-serif; font-size: 0.7rem; letter-spacing: 0.07em; cursor: pointer; position: relative; transition: opacity 120ms ease; }
+  .nav-btn:active { opacity: 0.55; transition: opacity 0ms; }
+  .nav-btn.active { color: var(--gold); }
+  .nav-btn svg { width: 20px; height: 20px; }
+  .nav-badge { position: absolute; top: 2px; right: calc(50% - 22px); background: var(--amber-bar); color: var(--ink); font-size: 0.62rem; font-family: "Bebas Neue", sans-serif; min-width: 16px; height: 16px; border-radius: 999px; display: none; align-items: center; justify-content: center; padding: 0 3px; }
+  .nav-badge.show { display: flex; }
+  @keyframes badgePop { 0% { transform: scale(0.5); } 55% { transform: scale(1.3); } 100% { transform: scale(1); } }
+  .nav-badge.pop { animation: badgePop 380ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+  @media (prefers-reduced-motion: reduce) { .nav-badge.pop { animation: none; } }
+</style>
+
+<div id="root"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.128.0/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.24.7/babel.min.js"></script>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useRef, useMemo, useCallback } = React;
+
+const PRODUCTS = [
+  {
+    id: "classico-250",
+    name: "O Clássico do Dia a Dia",
+    size: "250 gramas",
+    sizeShort: "250g",
+    seal: "FORTE",
+    desc: "Tamanho certo pra quem não abre mão de café forte todo dia. Rende bem, mantém o sabor e cabe no bolso.",
+    tags: ["Torrado escuro", "Moído", "Seleção manual"],
+    price: 24.9,
+    tone: "a",
+  },
+  {
+    id: "familia-500",
+    name: "Para Família e Empresa",
+    size: "500 gramas",
+    sizeShort: "500g",
+    seal: "FAMÍLIA",
+    desc: "Para casa que consome muito ou empresa que não abre mão da qualidade. O mesmo café forte — em maior quantidade.",
+    tags: ["Torrado escuro", "Moído", "Melhor custo"],
+    price: 44.9,
+    tone: "b",
+  },
+];
+
+const STORE_WHATSAPP = "5544999547356"; // (44) 99954-7356
+
+function money(v) {
+  return "R$ " + v.toFixed(2).replace(".", ",");
+}
+
+function prefersReducedMotion() {
+  return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+/* ---------------- Three.js hero: a small procedural 3D coffee bag ---------------- */
+function ThreeHero() {
+  const mountRef = useRef(null);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    const THREE = window.THREE;
+    const container = mountRef.current;
+    if (!THREE || !container) {
+      setFailed(true);
+      return;
+    }
+
+    let width = container.clientWidth || 320;
+    let height = container.clientHeight || 260;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(32, width / height, 0.1, 100);
+    camera.position.set(0, 0.25, 4.4);
+
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    } catch (e) {
+      setFailed(true);
+      return;
+    }
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.15;
+    container.appendChild(renderer.domElement);
+
+    scene.add(new THREE.AmbientLight(0x4a2c14, 0.65));
+    const key = new THREE.PointLight(0xf5a820, 2.4, 22, 2);
+    key.position.set(2.2, 2, 3);
+    scene.add(key);
+    const rim = new THREE.PointLight(0xf0dba5, 1.1, 20, 2);
+    rim.position.set(-2.6, 1.2, -2);
+    scene.add(rim);
+    const fillLight = new THREE.PointLight(0x2f6f63, 0.6, 18, 2);
+    fillLight.position.set(0, -1.5, 2);
+    scene.add(fillLight);
+
+    const bag = new THREE.Group();
+
+    const bodyGeo = new THREE.BoxGeometry(1.55, 1.95, 0.62, 3, 3, 2);
+    const bodyPos = bodyGeo.attributes.position;
+    // Soften the hard edges a little by pulling corner-ish verts inward (cheap fake bevel).
+    for (let i = 0; i < bodyPos.count; i++) {
+      const x = bodyPos.getX(i), y = bodyPos.getY(i), z = bodyPos.getZ(i);
+      const edge = Math.abs(x) > 0.6 && Math.abs(z) > 0.2;
+      if (edge) {
+        bodyPos.setX(i, x * 0.92);
+        bodyPos.setZ(i, z * 0.92);
+      }
+    }
+    bodyGeo.computeVertexNormals();
+    const bodyMat = new THREE.MeshStandardMaterial({ color: 0x3d2410, roughness: 0.88, metalness: 0.04 });
+    bag.add(new THREE.Mesh(bodyGeo, bodyMat));
+
+    const foldGeo = new THREE.BoxGeometry(1.15, 0.34, 0.64);
+    const foldMat = new THREE.MeshStandardMaterial({ color: 0x6b4626, roughness: 0.92 });
+    const fold = new THREE.Mesh(foldGeo, foldMat);
+    fold.position.set(0, 1.06, 0);
+    fold.rotation.x = 0.18;
+    bag.add(fold);
+
+    const sealGeo = new THREE.CylinderGeometry(0.44, 0.44, 0.06, 40);
+    const sealMat = new THREE.MeshStandardMaterial({
+      color: 0xf5a820, roughness: 0.35, metalness: 0.25,
+      emissive: 0x2b1400, emissiveIntensity: 0.15,
+    });
+    const seal = new THREE.Mesh(sealGeo, sealMat);
+    seal.rotation.x = Math.PI / 2;
+    seal.position.set(0, 0.1, 0.34);
+    bag.add(seal);
+
+    const ringGeo = new THREE.TorusGeometry(0.44, 0.025, 12, 48);
+    const ringMat = new THREE.MeshStandardMaterial({ color: 0x1a0e05, roughness: 0.6 });
+    const ring = new THREE.Mesh(ringGeo, ringMat);
+    ring.position.copy(seal.position);
+    bag.add(ring);
+
+    scene.add(bag);
+
+    // A few drifting "steam" motes rising off the bag.
+    const moteCount = 26;
+    const moteGeo = new THREE.BufferGeometry();
+    const motePos = new Float32Array(moteCount * 3);
+    const moteSeed = new Float32Array(moteCount);
+    for (let i = 0; i < moteCount; i++) {
+      motePos[i * 3] = (Math.random() - 0.5) * 1.6;
+      motePos[i * 3 + 1] = Math.random() * 2.4 - 1.2;
+      motePos[i * 3 + 2] = (Math.random() - 0.5) * 1.2 + 0.4;
+      moteSeed[i] = Math.random() * Math.PI * 2;
+    }
+    moteGeo.setAttribute("position", new THREE.BufferAttribute(motePos, 3));
+    const moteMat = new THREE.PointsMaterial({
+      color: 0xf0dba5, size: 0.045, transparent: true, opacity: 0.55, depthWrite: false,
+    });
+    const motes = new THREE.Points(moteGeo, moteMat);
+    scene.add(motes);
+
+    const reduced = prefersReducedMotion();
+    let raf;
+    let t = 0;
+    let pointerX = 0;
+
+    function onPointerMove(e) {
+      const rect = container.getBoundingClientRect();
+      const x = (e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0].clientX) || 0) - rect.left;
+      pointerX = (x / rect.width) * 2 - 1;
+    }
+    container.addEventListener("pointermove", onPointerMove);
+
+    function animate() {
+      raf = requestAnimationFrame(animate);
+      if (!reduced) {
+        t += 0.007;
+        bag.rotation.y = t * 0.22 + pointerX * 0.35;
+        bag.position.y = Math.sin(t * 1.4) * 0.07;
+
+        const pos = moteGeo.attributes.position;
+        for (let i = 0; i < moteCount; i++) {
+          let y = pos.getY(i) + 0.0022;
+          if (y > 1.3) y = -1.2;
+          pos.setY(i, y);
+          pos.setX(i, pos.getX(i) + Math.sin(t * 2 + moteSeed[i]) * 0.0006);
+        }
+        pos.needsUpdate = true;
+      }
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    function handleResize() {
+      width = container.clientWidth;
+      height = container.clientHeight;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    }
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", handleResize);
+      container.removeEventListener("pointermove", onPointerMove);
+      if (renderer.domElement.parentNode === container) container.removeChild(renderer.domElement);
+      bodyGeo.dispose(); bodyMat.dispose();
+      foldGeo.dispose(); foldMat.dispose();
+      sealGeo.dispose(); sealMat.dispose();
+      ringGeo.dispose(); ringMat.dispose();
+      moteGeo.dispose(); moteMat.dispose();
+      renderer.dispose();
+    };
+  }, []);
+
+  return (
+    <div className="three-hero" ref={mountRef}>
+      {!failed && <span className="hero-hint">ARRASTE PRA GIRAR</span>}
+    </div>
+  );
+}
+
+/* ---------------- small shared bits ---------------- */
+function Stepper({ value, onDelta, dark }) {
+  return (
+    <div className={"stepper" + (dark ? " dark" : "")}>
+      <button type="button" onClick={() => onDelta(-1)}>−</button>
+      <span>{value}</span>
+      <button type="button" onClick={() => onDelta(1)}>+</button>
+    </div>
+  );
+}
+
+function TopBar() {
+  return (
+    <div className="topbar">
+      <div className="topbar-left">
+        <a className="back-link" href="/">&larr; SITE</a>
+        <div className="logo"><span className="cafe">CAFÉ</span><span className="irmao">IRMÃO</span></div>
+      </div>
+      <div className="unit-pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z" />
+          <circle cx="12" cy="10" r="2.5" />
+        </svg>
+        MANDAGUAÇU · PR
+      </div>
+    </div>
+  );
+}
+
+function BottomNav({ view, onGoCatalog, onGoCart, cartCount, badgePop }) {
+  return (
+    <nav className="bottom-nav">
+      <button type="button" className={"nav-btn" + (view === "catalog" ? " active" : "")} onClick={onGoCatalog}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+          <path d="M4 8h13a3 3 0 0 1 0 6h-1" /><path d="M4 8v7a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3V8" /><path d="M8 3v2M12 3v2M16 3v2" />
+        </svg>
+        CARDÁPIO
+      </button>
+      <button type="button" className={"nav-btn" + (view === "cart" ? " active" : "")} onClick={onGoCart}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+          <path d="M6 8h12l-1.2 11.2a2 2 0 0 1-2 1.8H9.2a2 2 0 0 1-2-1.8L6 8Z" /><path d="M9 8V6a3 3 0 0 1 6 0v2" />
+        </svg>
+        CARRINHO
+        <span className={"nav-badge" + (cartCount > 0 ? " show" : "") + (badgePop ? " pop" : "")}>{cartCount}</span>
+      </button>
+    </nav>
+  );
+}
+
+/* ---------------- screens ---------------- */
+function CatalogScreen({ draftQty, onStepDraft, onAdd }) {
+  return (
+    <main className="view">
+      <section className="hero-strip">
+        <ThreeHero />
+        <div className="hero-copy">
+          <span className="eyebrow">PEÇA O SEU</span>
+          <h1>CAFÉ FORTE,<br />NA PORTA DE <span>CASA.</span></h1>
+          <p>Torrado e moído com cuidado. Escolha o pacote, confirme os dados e a gente combina a entrega pelo WhatsApp.</p>
+        </div>
+      </section>
+
+      <section className="catalog-section">
+        <span className="eyebrow on-parchment">NOSSOS PRODUTOS</span>
+        <h2>Escolha o seu.</h2>
+
+        {PRODUCTS.map((p) => (
+          <div className="product-card" key={p.id}>
+            <div className={"bag-art tone-" + p.tone}>
+              <div className="bag">
+                <div className="seal">{p.seal}</div>
+                <div className="size-tag">{p.sizeShort.toUpperCase()}</div>
+              </div>
+            </div>
+            <div className="product-body">
+              <span className="product-size">{p.size.toUpperCase()}</span>
+              <h3 className="product-title">{p.name}</h3>
+              <p className="product-desc">{p.desc}</p>
+              <div className="tag-row">
+                {p.tags.map((t) => <span className="tag" key={t}>{t.toUpperCase()}</span>)}
+              </div>
+              <div className="product-footer">
+                <span className="price">{money(p.price)} <small>/ pacote</small></span>
+                <Stepper value={draftQty[p.id] || 1} onDelta={(d) => onStepDraft(p.id, d)} />
+              </div>
+              <button type="button" className="btn btn-gold" onClick={() => onAdd(p.id)}>ADICIONAR AO CARRINHO</button>
+            </div>
+          </div>
+        ))}
+      </section>
+    </main>
+  );
+}
+
+function CartScreen({ cart, subtotal, onStepCart, onRemove, onGoCheckout, onGoCatalog }) {
+  return (
+    <main className="view">
+      <div className="cart-wrap">
+        <span className="eyebrow">SEU PEDIDO</span>
+        <h2>Confere aí.</h2>
+
+        {cart.length === 0 ? (
+          <div className="empty-state">
+            <p>Seu carrinho tá vazio.<br />Bora escolher um café?</p>
+            <button type="button" className="btn btn-outline" onClick={onGoCatalog}>VER CARDÁPIO</button>
+          </div>
+        ) : (
+          <React.Fragment>
+            {cart.map((c, i) => {
+              const p = PRODUCTS.find((p) => p.id === c.id);
+              return (
+                <div className="cart-item" key={p.id}>
+                  <div className={"cart-swatch" + (p.tone === "b" ? " b" : "")}></div>
+                  <div>
+                    <div className="name">{p.name}</div>
+                    <div className="meta">{p.size}</div>
+                    <div className="row-controls">
+                      <Stepper value={c.qty} dark onDelta={(d) => onStepCart(i, d)} />
+                      <button type="button" className="remove-link" onClick={() => onRemove(i)}>remover</button>
+                    </div>
+                  </div>
+                  <div className="line-price">{money(p.price * c.qty)}</div>
+                </div>
+              );
+            })}
+            <div className="subtotal-row">
+              <span className="label">SUBTOTAL</span>
+              <span className="amount">{money(subtotal)}</span>
+            </div>
+            <button type="button" className="btn btn-gold btn-block" onClick={onGoCheckout}>IR PARA ENTREGA</button>
+          </React.Fragment>
+        )}
+      </div>
+    </main>
+  );
+}
+
+const PAYMENTS = ["Pix", "Cartão na entrega", "Dinheiro"];
+
+function CheckoutScreen({ form, setForm, errors, onSubmit }) {
+  return (
+    <main className="view">
+      <div className="checkout-wrap">
+        <span className="eyebrow">QUASE LÁ</span>
+        <h2>Finalizar pedido.</h2>
+
+        <div className="step">
+          <div className="step-head"><span className="step-num">01</span><span className="step-title">SEUS DADOS</span></div>
+          <label className="field"><span>Nome</span>
+            <input type="text" placeholder="Seu nome" value={form.nome} onChange={(e) => setForm({ ...form, nome: e.target.value })} />
+          </label>
+          <label className="field"><span>WhatsApp</span>
+            <input type="tel" placeholder="(44) 90000-0000" value={form.telefone} onChange={(e) => setForm({ ...form, telefone: e.target.value })} />
+          </label>
+          {errors.dados && <div className="field-error">Preenche nome e WhatsApp pra gente continuar.</div>}
+        </div>
+
+        <div className="step">
+          <div className="step-head"><span className="step-num">02</span><span className="step-title">RETIRADA OU ENTREGA</span></div>
+          <div className="choice-row">
+            <div className={"choice" + (!form.entrega ? " selected" : "")} onClick={() => setForm({ ...form, entrega: false })}>RETIRAR NA LOJA</div>
+            <div className={"choice" + (form.entrega ? " selected" : "")} onClick={() => setForm({ ...form, entrega: true })}>ENTREGA</div>
+          </div>
+          {form.entrega && (
+            <div className="addr-field">
+              <label className="field"><span>Endereço de entrega</span>
+                <textarea placeholder="Rua, número, bairro, referência" value={form.endereco} onChange={(e) => setForm({ ...form, endereco: e.target.value })} />
+              </label>
+            </div>
+          )}
+          {errors.endereco && <div className="field-error">Adiciona o endereço pra gente entregar certinho.</div>}
+        </div>
+
+        <div className="step">
+          <div className="step-head"><span className="step-num">03</span><span className="step-title">PAGAMENTO</span></div>
+          <div className="choice-row">
+            {PAYMENTS.map((p) => (
+              <div key={p} className={"choice" + (form.pagamento === p ? " selected" : "")} onClick={() => setForm({ ...form, pagamento: p })}>
+                {p.toUpperCase()}
+              </div>
+            ))}
+          </div>
+          <p className="payment-note">Por enquanto o pagamento é combinado direto com a loja pelo WhatsApp — a cobrança automática de Pix é o próximo passo do roteiro do app.</p>
+        </div>
+
+        <button type="button" className="btn btn-gold btn-block" onClick={onSubmit}>ENVIAR PEDIDO PELO WHATSAPP</button>
+      </div>
+    </main>
+  );
+}
+
+function ConfirmScreen({ data, onNewOrder }) {
+  if (!data) return null;
+  return (
+    <main className="view">
+      <div className="confirm-hero">
+        <div className="check">✓</div>
+        <h2>PEDIDO PRONTO<br />PRA ENVIAR.</h2>
+        <p>Abrimos o WhatsApp com tudo preenchido — é só conferir e apertar enviar por lá.</p>
+      </div>
+      <div className="confirm-summary">
+        <div className="summary-card">
+          {data.lines.map((l, i) => <div className="summary-line" key={i}><span className="k">{l}</span></div>)}
+          <div className="summary-line total"><span className="k">SUBTOTAL</span><span className="v">{data.subtotalText}</span></div>
+          <div className="summary-line"><span className="k">{data.entrega ? "Entrega" : "Retirada"}</span><span className="v">{data.entrega ? data.endereco : "Loja · Mandaguaçu, PR"}</span></div>
+          <div className="summary-line"><span className="k">Pagamento</span><span className="v">{data.pagamento}</span></div>
+        </div>
+        <a className="btn btn-gold btn-block" href={data.waUrl} target="_blank" rel="noopener">ABRIR WHATSAPP</a>
+        <button type="button" className="btn btn-outline btn-block" style={{ marginTop: "0.7rem" }} onClick={onNewOrder}>FAZER NOVO PEDIDO</button>
+        <p className="proto-note">Este é um protótipo funcional do app — o pedido é enviado como mensagem pro WhatsApp da loja. Pagamento automático, painel de pedidos e cadastro de novas unidades entram nas próximas fases.</p>
+      </div>
+    </main>
+  );
+}
+
+/* ---------------- root ---------------- */
+function App() {
+  const [view, setView] = useState("catalog");
+  const [draftQty, setDraftQty] = useState({});
+  const [cart, setCart] = useState([]);
+  const [form, setForm] = useState({ nome: "", telefone: "", endereco: "", entrega: false, pagamento: "Pix" });
+  const [errors, setErrors] = useState({ dados: false, endereco: false });
+  const [confirmData, setConfirmData] = useState(null);
+  const [badgePop, setBadgePop] = useState(false);
+
+  const stepDraft = useCallback((id, delta) => {
+    setDraftQty((prev) => ({ ...prev, [id]: Math.max(1, (prev[id] || 1) + delta) }));
+  }, []);
+
+  const addToCart = useCallback((id) => {
+    setCart((prev) => {
+      const qty = draftQty[id] || 1;
+      const idx = prev.findIndex((c) => c.id === id);
+      if (idx >= 0) {
+        const next = [...prev];
+        next[idx] = { ...next[idx], qty: next[idx].qty + qty };
+        return next;
+      }
+      return [...prev, { id, qty }];
+    });
+    setDraftQty((prev) => ({ ...prev, [id]: 1 }));
+    if (!prefersReducedMotion()) {
+      setBadgePop(false);
+      requestAnimationFrame(() => setBadgePop(true));
+    }
+  }, [draftQty]);
+
+  const stepCart = useCallback((index, delta) => {
+    setCart((prev) => {
+      const next = [...prev];
+      next[index] = { ...next[index], qty: next[index].qty + delta };
+      return next.filter((c) => c.qty > 0);
+    });
+  }, []);
+
+  const removeCart = useCallback((index) => {
+    setCart((prev) => prev.filter((_, i) => i !== index));
+  }, []);
+
+  const cartCount = useMemo(() => cart.reduce((s, c) => s + c.qty, 0), [cart]);
+  const subtotal = useMemo(() => cart.reduce((s, c) => {
+    const p = PRODUCTS.find((p) => p.id === c.id);
+    return s + (p ? p.price * c.qty : 0);
+  }, 0), [cart]);
+
+  function submitOrder() {
+    const hasDados = form.nome.trim() && form.telefone.trim();
+    const hasEndereco = !form.entrega || form.endereco.trim();
+    setErrors({ dados: !hasDados, endereco: !hasEndereco });
+    if (!hasDados || !hasEndereco) return;
+    if (cart.length === 0) { setView("catalog"); return; }
+
+    const lines = cart.map((c) => {
+      const p = PRODUCTS.find((p) => p.id === c.id);
+      return "• " + c.qty + "x " + p.name + " (" + p.size + ") — " + money(p.price * c.qty);
+    });
+
+    const summaryText =
+      "Pedido — Café do Irmão\n" +
+      "Cliente: " + form.nome + "\n" +
+      "WhatsApp: " + form.telefone + "\n\n" +
+      lines.join("\n") + "\n\n" +
+      "Subtotal: " + money(subtotal) + "\n" +
+      (form.entrega ? "Entrega: " + form.endereco + "\n" : "Retirada: loja Mandaguaçu, PR\n") +
+      "Pagamento: " + form.pagamento;
+
+    const waUrl = "https://wa.me/" + STORE_WHATSAPP + "?text=" + encodeURIComponent(summaryText);
+
+    setConfirmData({
+      lines, subtotalText: money(subtotal), entrega: form.entrega, endereco: form.endereco,
+      pagamento: form.pagamento, waUrl,
+    });
+    setView("confirm");
+  }
+
+  function newOrder() {
+    setCart([]);
+    setForm({ nome: "", telefone: "", endereco: "", entrega: false, pagamento: "Pix" });
+    setErrors({ dados: false, endereco: false });
+    setConfirmData(null);
+    setView("catalog");
+  }
+
+  return (
+    <div className="app">
+      <TopBar />
+      {view === "catalog" && <CatalogScreen draftQty={draftQty} onStepDraft={stepDraft} onAdd={addToCart} />}
+      {view === "cart" && (
+        <CartScreen cart={cart} subtotal={subtotal} onStepCart={stepCart} onRemove={removeCart}
+          onGoCheckout={() => setView("checkout")} onGoCatalog={() => setView("catalog")} />
+      )}
+      {view === "checkout" && <CheckoutScreen form={form} setForm={setForm} errors={errors} onSubmit={submitOrder} />}
+      {view === "confirm" && <ConfirmScreen data={confirmData} onNewOrder={newOrder} />}
+
+      {(view === "catalog" || view === "cart") && (
+        <BottomNav view={view} cartCount={cartCount} badgePop={badgePop}
+          onGoCatalog={() => setView("catalog")} onGoCart={() => setView("cart")} />
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
